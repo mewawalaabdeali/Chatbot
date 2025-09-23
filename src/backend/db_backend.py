@@ -30,10 +30,9 @@ graph.add_edge("chat_node", END)
 
 chatbot = graph.compile(checkpointer=checkpointer)
 
-for message_chunk, metadata in chatbot.stream(
-    {'messages':[HumanMessage(content='Which application side of LLM is future, vision or NLP?')]},
-    config={'configurable':{'thread_id':'thread-1'}},
-    stream_mode='messages'
-):
-    if message_chunk.content:
-        print(message_chunk.content, end=" ", flush=True)
+def retrieve_all_threads():
+    all_threads = set()
+    for checkpoint in checkpointer.list(None):
+        all_threads.add(checkpoint.config['configurable']['thread_id'])
+
+    return list(all_threads)
